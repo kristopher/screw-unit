@@ -173,6 +173,10 @@ Screw.Unit(function() {
         expect(1).to_not(be_undefined);
       });
 
+      it("does not match null", function() {
+        expect(null).to_not(be_undefined);
+      });
+
       describe(".failure_message", function() {
         it("prints 'expected [actual] to (not) be undefined", function() {
           var message = undefined;
