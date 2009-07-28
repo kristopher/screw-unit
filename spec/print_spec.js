@@ -30,8 +30,14 @@ Screw.Unit(function() {
     describe('when given a string', function() {
       it("returns the string, quoted", function() {
         expect($.print('asdf')).to(equal, '"asdf"');
+      });      
+
+      describe("that is empty", function() {
+        it("should return empty quotes", function() {
+          expect($.print('')).to(equal, '""');
+        });
       });
-      
+
       describe('when the string is longer than the [max_string] option', function() {
         it("returns the string, truncated", function() {
           expect($.print('asdf', { max_string: 3 })).to(equal, '"asd..."');
