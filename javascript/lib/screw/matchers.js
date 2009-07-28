@@ -126,7 +126,7 @@ module("Screw", function(c) { with(c) {
 
     def('be_null', {
       match: function(expected, actual) {
-        return actual == null;
+        return actual === null;
       },
 
       failure_message: function(expected, actual, not) {
@@ -136,7 +136,7 @@ module("Screw", function(c) { with(c) {
 
     def('be_undefined', {
       match: function(expected, actual) {
-        return actual == undefined;
+        return actual === undefined;
       },
 
       failure_message: function(expected, actual, not) {
@@ -156,6 +156,7 @@ module("Screw", function(c) { with(c) {
 
     def('be_false', {
       match: function(expected, actual) {
+        // '0' == false  but !'0' != false
         return !actual;
       },
 
@@ -163,7 +164,63 @@ module("Screw", function(c) { with(c) {
         return 'expected ' + Screw.$.print(actual) + (not ? ' to not be false' : ' to be false');
       }
     });
-
+    
+    def('be_identical', {
+      match: function(expected, actual) {
+        return (expected === actual);
+      },
+      
+      failure_message: function(expected, actual, not) {
+        return 'expected ' + Screw.$.print(actual) + (not ? ' to not be identical to ' : ' to be identical to ') + Screw.$.print(expected);
+      }      
+    });
+    
+    def('include', {
+      match: function(expected, actual) {
+        if((actual instanceof Array) || (actual.callee)) {
+          for(var i = 0; i < actual.length; i++) {
+            if (Screw.Matchers.equal.match(expected, actual[i]) === true) {
+              return true;
+            }
+          }
+        } else if (typeof actual == "string") {
+          return (actual.indexOf(expected) !== -1);
+        } else {
+          throw(new Error(Screw.$.print(actual) + ' is not of Array or String type.'))
+        }
+      },
+      
+      failure_message: function(expected, actual, not) {
+        return 'expected ' + Screw.$.print(actual) + (not ? ' to not include ' : ' to include ') + Screw.$.print(expected);        
+      }
+    });
+    
+    def('have_key', {
+      //INFO only checks user defined properties
+      match: function(expected, actual) {
+        return (expected in actual);
+      },
+      
+      failure_message: function(expected, actual, not) {
+        return 'expected ' + Screw.$.print(actual) + (not ? ' to not have key ' : ' to have key ') + Screw.$.print(expected);                
+      }
+    });
+    
+    def('have_value', {
+      //INFO only checks user defined properties
+      match: function(expected, actual) {
+        var values = [];
+        for(var property in actual) {
+          values.push(actual[property]);
+        }
+        return Screw.Matchers.include.match(expected, values)        
+      },
+      
+      failure_message: function(expected, actual, not) {
+        return 'expected ' + Screw.$.print(actual) + (not ? ' to not have value ' : ' to have value ') + Screw.$.print(expected);                
+      }
+    });
+    
     def('have_been_called', {
       match: function(expected, actual) {
         if (expected) {

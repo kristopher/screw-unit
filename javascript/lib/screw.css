@@ -84,6 +84,9 @@ li.example span.name {
   cursor: pointer;
 }
 
+li.example.pending {
+  background: #CCFF33;  
+}
 
 li.example.passed {
   background: #95ff95;

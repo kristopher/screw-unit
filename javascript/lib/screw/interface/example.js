@@ -13,6 +13,9 @@ module("Screw", function(c) { with(c) {
       methods: {
         after_initialize: function() {
           var self = this;
+          this.example.on_pending(function() {
+            self.addClass("pending");
+          })
           this.example.on_pass(function() {
             self.addClass("passed");
           })

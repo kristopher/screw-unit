@@ -7,14 +7,18 @@ module("Screw", function(c) { with (c) {
     });
 
     def('context', Screw.Keywords.describe);
-
     def('it', function(name, fn) {
       Screw.current_description().add_example(new Screw.Example(name, fn));
     });
-
     def('specify', Screw.Keywords.it);
     def('they', Screw.Keywords.it);
-
+    
+    def('xit', function(name, fn) {
+      Screw.current_description().add_example(new Screw.Example(name, fn, true));      
+    });
+    
+    def('pending', Screw.Keywords.xit);
+    
     def('before', function(fn) {
       Screw.current_description().add_before(fn);
     });

@@ -7,6 +7,12 @@ Screw.Unit(function(c) { with(c) {
       });
       
       describe('when actual is an object', function() {
+        describe("when both objects are empty", function() {
+          it("matches successfully", function() {
+            expect({}).to(equal, {});
+          });
+        });
+      
         describe("when expected has the same keys and values", function() {
           it("matches successfully", function() {
             expect({a: 'b', c: 'd'}).to(equal, {a: 'b', c: 'd'});
@@ -164,7 +170,9 @@ Screw.Unit(function(c) { with(c) {
         expect(null).to(be_null);
         expect(1).to_not(be_null);
       });
-
+      it("should not match undefined", function() {
+        expect(undefined).to_not(be_null)
+      });
       describe(".failure_message", function() {
         it("prints 'expected [actual] to (not) be null", function() {
           var message = null;
@@ -182,7 +190,9 @@ Screw.Unit(function(c) { with(c) {
         expect(undefined).to(be_undefined);
         expect(1).to_not(be_undefined);
       });
-
+      it("should not match null", function() {
+        expect(null).to_not(be_undefined)
+      });
       describe(".failure_message", function() {
         it("prints 'expected [actual] to (not) be undefined", function() {
           var message = undefined;
@@ -199,6 +209,7 @@ Screw.Unit(function(c) { with(c) {
       it("matches values that are considered true conditions", function() {
         expect(true).to(be_true);
         expect(1).to(be_true);
+        expect('1').to(be_true);
         expect(false).to_not(be_true);
         expect(undefined).to_not(be_true);
         expect(null).to_not(be_true);
@@ -221,6 +232,8 @@ Screw.Unit(function(c) { with(c) {
         expect(false).to(be_false);
         expect(undefined).to(be_false);
         expect(null).to(be_false);
+        expect(0).to(be_false);
+        expect('').to(be_false);
         expect(true).to_not(be_false);
         expect(1).to_not(be_false);
       });
@@ -332,7 +345,116 @@ Screw.Unit(function(c) { with(c) {
         });
       });
     });
+    
+    describe("#be_identical", function() {
+      var obj = {}, array = [], string = '', number = 1, boolean = true, regex = /./;      
+      it("matches identical values", function() {
+        expect(obj).to(be_identical, obj);
+        expect(array).to(be_identical, array);
+        expect(string).to(be_identical, string);
+        expect(number).to(be_identical, number);
+        expect(boolean).to(be_identical, boolean);
+        expect(regex).to(be_identical, regex);
+      });
+      
+      it("should not match non identical values", function() {
+        expect(obj).to_not(be_identical, {});
+        expect(array).to_not(be_identical, []);
+        expect(boolean).to_not(be_identical, 1);
+        expect(regex).to_not(be_identical, /./);
+      });
+      
+      describe(".failure_message", function() {
+        it('prints "expected [expected] to (not) be identical to [actual]"', function() {
+          var message = null, obj = {};          
+          try { expect(obj).to(be_identical, {}) } catch(e) { message = e.message }
+          expect(message).to(equal, 'expected {} to be identical to {}');
 
+          try { expect(obj).to_not(be_identical, obj) } catch(e) { message = e.message }
+          expect(message).to(equal, 'expected {} to not be identical to {}');
+        });
+      })
+    });
+    
+    describe("#include", function() {
+      describe("with arrays", function() {
+        it("matches a value contained in the array", function() {
+          expect([1,2,3]).to(include, 2);
+          expect([1,2,3]).to_not(include, 4);
+        });
+      });
+      
+      describe("with strings", function() {
+        it("matches a substring", function() {
+          expect('test').to(include, 'e');
+          expect('test').to_not(include, 'z');          
+        })
+      })
+      
+      describe("with a non Array or String value", function() {
+        it("should throw an error", function() {
+          var message = null
+          try { expect(1).to(include, 1) } catch(e) { message = e.message }
+          expect(message).to(equal, '1 is not of Array or String type.')
+
+          try { expect({}).to(include, 'test') } catch(e) { message = e.message }
+          expect(message).to(equal, '{} is not of Array or String type.')
+        })
+      })
+
+      describe(".failure_message", function() {
+        it('prints "expected [expected] to (not) include [actual]"', function() {
+          var message = null, array = [1,2,3];          
+          try { expect(array).to(include, 4) } catch(e) { message = e.message }
+          expect(message).to(equal, 'expected [ 1, 2, 3 ] to include 4');
+
+          try { expect(array).to_not(include, 2) } catch(e) { message = e.message }
+          expect(message).to(equal, 'expected [ 1, 2, 3 ] to not include 2');        
+        });
+      });      
+    });
+    
+    describe("#have_key", function() {
+      var obj;
+      before(function() {
+        obj = { a: 'b', c: 'd' };
+      })
+      it("matches a key in an object", function() {
+        expect(obj).to(have_key, 'a');
+        expect(obj).to_not(have_key, 'd');          
+      });
+      
+      describe(".failure_message", function() {
+        it('prints "expected [expected] to (not) have key [actual]"', function() {
+          var message = null;
+          try { expect(obj).to(have_key, 'd') } catch(e) { message = e.message }
+          expect(message).to(equal, 'expected { a: "b", c: "d" } to have key "d"');
+
+          try { expect(obj).to_not(have_key, 'a') } catch(e) { message = e.message }
+          expect(message).to(equal, 'expected { a: "b", c: "d" } to not have key "a"');        
+        });
+      });      
+    });
+
+    describe("#have_value", function() {
+      var obj = { a: 'b', c: 'd' }
+      it("matches a value in an object", function() {
+        expect(obj).to(have_value, 'b');
+        expect(obj).to_not(have_value, 'a');          
+      });
+      
+      describe(".failure_message", function() {
+        it('prints "expected [expected] to (not) have_value [actual]"', function() {
+          var message = null
+          try { expect(obj).to(have_value, 'c') } catch(e) { message = e.message }
+          expect(message).to(equal, 'expected { a: "b", c: "d" } to have value "c"');
+
+          try { expect(obj).to_not(have_value, 'd') } catch(e) { message = e.message }
+          expect(message).to(equal, 'expected { a: "b", c: "d" } to not have value "d"');        
+        });
+      });      
+    });
+    
     describe("#have_been_called", function() {
       var mock_fn;
       before(function() {

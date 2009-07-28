@@ -1,6 +1,6 @@
 module("Screw", function(c) { with (c) {
   def('Unit', function(specification) {
-    specification(new Screw.Context());
+    with (new Screw.Context()) { specification.call(this) };
   });
 
   def('root_description', function() {

@@ -2,7 +2,7 @@ var Prefs = {
   data: {},
 
   load: function () {
-    var split_cookies = document.cookie.split(';');
+    var split_cookies = document.cookie && document.cookie.split(';') || [];
     var prefs_string;
     for(var i = 0; i < split_cookies.length; i++) {
       var screw_unit_cookie_prefix = /^ *screw_unit_prefs=/;

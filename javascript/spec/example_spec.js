@@ -71,6 +71,21 @@ Screw.Unit(function(c) { with(c) {
         expect(example_contexts[0]).to(equal, example_contexts[2]);
       });
 
+      context("if the example is pending", function() {
+        var pending_example;
+        before(function() {
+          pending_example = new Screw.Example(name, fn, true);
+        })
+        it("invokes callbacks registered with #on_pending", function() {
+          var callback_invoked = false;
+          pending_example.on_pending(function() {
+            callback_invoked = true;
+          })
+          pending_example.run();
+          expect(callback_invoked).to(be_true);
+        });
+      });
+      
       context("if the example fails", function() {
         before(function() {
           should_fail = true;

@@ -1,4 +1,4 @@
-Screw.Unit(function(c) { with(c) {
+Screw.Unit(function(c) { //with(c) {
   describe("Screw.Description", function() {
     var description, name, examples;
 
@@ -218,4 +218,4 @@ Screw.Unit(function(c) { with(c) {
       });
     });
   });
-}});
+});
