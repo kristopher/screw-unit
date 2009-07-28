@@ -82,6 +82,11 @@ html {
             margin-left: 1em;
             color: #993300;
           }
+
+          .describes .describe .its .it.pending h2 {
+            background-color: #F3F952;
+            color: white !important;
+          }
           
           .describes .describe .its .it h2:hover {
             cursor: pointer;
