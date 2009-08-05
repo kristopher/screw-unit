@@ -16,6 +16,10 @@ Screw.Unit(function() {
         describe("when expected has different keys and values", function() {
           it("does not match", function() {
             expect({a: 'b', c: 'd', e: 'f'}).to_not(equal, {a: 'b', c: 'd', e: 'G'});
+            expect({a: 0, c: 'd', e: 'f'}).to_not(equal, {a: false, c: 'd', e: 'f'});
+            expect({a: '0', c: 'd', e: 'f'}).to_not(equal, {a: 0, c: 'd', e: 'f'});
+            expect({a: null, c: 'd', e: 'f'}).to_not(equal, {a: undefined, c: 'd', e: 'f'});
+            expect({a: [1], c: 'd', e: 'f'}).to_not(equal, {a: 1, c: 'd', e: 'f'});
           });
         });
         
