@@ -235,6 +235,26 @@ Screw.Unit(function() {
       });
     });
 
+    describe('#be_identical', function() {
+      it("matches values that are identical", function() {
+        var obj = {}
+        expect(obj).to(be_identical, obj);
+        expect(obj).to_not(be_identical, {});
+      });
+
+      describe(".failure_message", function() {
+        it("prints 'expected [actual] to (not) be identical_to", function() {
+          var message = false, obj = {};
+
+          try { expect(obj).to(be_identical, {}) } catch(e) { message = e }
+          expect(message).to(equal, 'expected {} to be identical to {}');
+
+          try { expect(obj).to_not(be_identical, obj) } catch(e) { message = e }
+          expect(message).to(equal, 'expected {} to not be identical to {}');
+        });
+      });
+    });
+
     describe('#match_selector', function() {
       var elt;
       before(function() {
