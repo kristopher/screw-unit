@@ -198,14 +198,17 @@ Screw.Unit(function() {
     });
 
     describe('#be_true', function() {
-      it("matches values that are considered true conditions", function() {
+      it("matches true", function() {
         expect(true).to(be_true);
-        expect(1).to(be_true);
-        expect(false).to_not(be_true);
-        expect(undefined).to_not(be_true);
-        expect(null).to_not(be_true);
       });
-
+      
+      it("does not match anything other than true", function() {
+        expect(1).to_not(be_true);
+        expect('true').to_not(be_true);
+        expect({}).to_not(be_true)
+        expect([]).to_not(be_true);
+      });
+      
       describe(".failure_message", function() {
         it("prints 'expected [actual] to (not) be true", function() {
           var message = true;
@@ -219,14 +222,17 @@ Screw.Unit(function() {
     });
 
     describe('#be_false', function() {
-      it("matches values that are considered false conditions", function() {
+      it("matches false", function() {
         expect(false).to(be_false);
-        expect(undefined).to(be_false);
-        expect(null).to(be_false);
-        expect(true).to_not(be_false);
-        expect(1).to_not(be_false);
       });
-
+      
+      it("does not match anything other than false", function() {
+        expect(undefined).to_not(be_false);
+        expect(null).to_not(be_false);
+        expect('').to_not(be_false);
+        expect(0).to_not(be_false);
+      });
+      
       describe(".failure_message", function() {
         it("prints 'expected [actual] to (not) be false", function() {
           var message = false;
