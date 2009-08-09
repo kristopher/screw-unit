@@ -265,6 +265,30 @@ Screw.Unit(function() {
       });
     });
 
+    describe('#be_NaN', function() {
+      it("matches NaN", function() {
+        expect(NaN).to(be_NaN);
+      });
+      
+      it("should not match anything other than NaN", function() {
+        expect({}).to_not(be_NaN);
+        expect('').to_not(be_NaN);
+        expect(0).to_not(be_NaN);
+      });
+      
+      describe(".failure_message", function() {
+        it("prints 'expected [actual] to (not) be identical_to", function() {
+          var message = false, obj = {};
+
+          try { expect({}).to(be_NaN) } catch(e) { message = e }
+          expect(message).to(equal, 'expected {} to be NaN');
+
+          try { expect(NaN).to_not(be_NaN) } catch(e) { message = e }
+          expect(message).to(equal, 'expected NaN to not be NaN');
+        });
+      });
+    });
+
     describe('#match_selector', function() {
       var elt;
       before(function() {
