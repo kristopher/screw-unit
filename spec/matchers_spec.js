@@ -24,6 +24,12 @@ Screw.Unit(function() {
         });
         
         describe("when expected is undefined", function() {
+          it("matches undefined", function() {
+            expect(undefined).to(equal, undefined);
+          });
+          it("does not match null", function() {
+            expect(null).to_not(equal, undefined);
+          });
           it("does not match", function() {
             expect({}).to_not(equal, undefined);
           });
@@ -35,6 +41,12 @@ Screw.Unit(function() {
           it("matches successfully", function() {
             expect(undefined).to(equal, undefined);
           });
+          it("does not match null", function() {
+            expect(undefined).to_not(equal, null);
+          });
+          it("does not match", function() {
+            expect(undefined).to_not(equal, {});
+          });          
         });
         
         describe("when expected is an empty object", function() {
@@ -69,7 +81,41 @@ Screw.Unit(function() {
           expect({"a":"b", "c": {"e":"f", "h":"h"}}).to_not(equal, {"a":"b", "c": {"e":"f", "g":"h"}});
         });
       });
+      
+      describe('when expected is NaN', function() {
+        it("matches NaN", function() {
+          expect(NaN).to(equal, NaN);
+        });
+        
+        it("should not match anything but NaN", function() {
+          expect(NaN).to_not(equal, 0);
+          expect(NaN).to_not(equal, {});
+          expect(NaN).to_not(equal, [NaN]);
+          expect(NaN).to_not(equal, 'NaN');
+          expect(NaN).to_not(equal, Infinity);
+          expect(NaN).to_not(equal, true);
+          expect(NaN).to_not(equal, null);
+          expect(NaN).to_not(equal, undefined);
+        });
+      });
 
+      describe('when actual is NaN', function() {
+        it("matches NaN", function() {
+          expect(NaN).to(equal, NaN);
+        });
+        
+        it("should not match anything but NaN", function() {
+          expect(0).to_not(equal, NaN);
+          expect({}).to_not(equal, NaN);
+          expect([NaN]).to_not(equal, NaN);
+          expect('NaN').to_not(equal, NaN);
+          expect(Infinity).to_not(equal, NaN);
+          expect(true).to_not(equal, NaN);
+          expect(null).to_not(equal, NaN);
+          expect(undefined).to_not(equal, NaN);
+        });
+      });
+      
       describe(".failure_message", function() {
         it('prints "expected [expected] to (not) be equal [actual]"', function() {
           var message = null;
