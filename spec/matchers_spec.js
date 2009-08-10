@@ -16,6 +16,10 @@ Screw.Unit(function() {
         describe("when expected has different keys and values", function() {
           it("does not match", function() {
             expect({a: 'b', c: 'd', e: 'f'}).to_not(equal, {a: 'b', c: 'd', e: 'G'});
+            expect({a: 0, c: 'd', e: 'f'}).to_not(equal, {a: false, c: 'd', e: 'f'});
+            expect({a: '0', c: 'd', e: 'f'}).to_not(equal, {a: 0, c: 'd', e: 'f'});
+            expect({a: null, c: 'd', e: 'f'}).to_not(equal, {a: undefined, c: 'd', e: 'f'});
+            expect({a: [1], c: 'd', e: 'f'}).to_not(equal, {a: 1, c: 'd', e: 'f'});
           });
         });
         
@@ -194,14 +198,17 @@ Screw.Unit(function() {
     });
 
     describe('#be_true', function() {
-      it("matches values that are considered true conditions", function() {
+      it("matches true", function() {
         expect(true).to(be_true);
-        expect(1).to(be_true);
-        expect(false).to_not(be_true);
-        expect(undefined).to_not(be_true);
-        expect(null).to_not(be_true);
       });
-
+      
+      it("does not match anything other than true", function() {
+        expect(1).to_not(be_true);
+        expect('true').to_not(be_true);
+        expect({}).to_not(be_true)
+        expect([]).to_not(be_true);
+      });
+      
       describe(".failure_message", function() {
         it("prints 'expected [actual] to (not) be true", function() {
           var message = true;
@@ -215,14 +222,17 @@ Screw.Unit(function() {
     });
 
     describe('#be_false', function() {
-      it("matches values that are considered false conditions", function() {
+      it("matches false", function() {
         expect(false).to(be_false);
-        expect(undefined).to(be_false);
-        expect(null).to(be_false);
-        expect(true).to_not(be_false);
-        expect(1).to_not(be_false);
       });
-
+      
+      it("does not match anything other than false", function() {
+        expect(undefined).to_not(be_false);
+        expect(null).to_not(be_false);
+        expect('').to_not(be_false);
+        expect(0).to_not(be_false);
+      });
+      
       describe(".failure_message", function() {
         it("prints 'expected [actual] to (not) be false", function() {
           var message = false;
@@ -231,6 +241,50 @@ Screw.Unit(function() {
 
           try { expect(false).to_not(be_false) } catch(e) { message = e }
           expect(message).to(equal, 'expected false to not be false');
+        });
+      });
+    });
+
+    describe('#be_identical', function() {
+      it("matches values that are identical", function() {
+        var obj = {}
+        expect(obj).to(be_identical, obj);
+        expect(obj).to_not(be_identical, {});
+      });
+
+      describe(".failure_message", function() {
+        it("prints 'expected [actual] to (not) be identical_to", function() {
+          var message = false, obj = {};
+
+          try { expect(obj).to(be_identical, {}) } catch(e) { message = e }
+          expect(message).to(equal, 'expected {} to be identical to {}');
+
+          try { expect(obj).to_not(be_identical, obj) } catch(e) { message = e }
+          expect(message).to(equal, 'expected {} to not be identical to {}');
+        });
+      });
+    });
+
+    describe('#be_NaN', function() {
+      it("matches NaN", function() {
+        expect(NaN).to(be_NaN);
+      });
+      
+      it("should not match anything other than NaN", function() {
+        expect({}).to_not(be_NaN);
+        expect('').to_not(be_NaN);
+        expect(0).to_not(be_NaN);
+      });
+      
+      describe(".failure_message", function() {
+        it("prints 'expected [actual] to (not) be identical_to", function() {
+          var message = false, obj = {};
+
+          try { expect({}).to(be_NaN) } catch(e) { message = e }
+          expect(message).to(equal, 'expected {} to be NaN');
+
+          try { expect(NaN).to_not(be_NaN) } catch(e) { message = e }
+          expect(message).to(equal, 'expected NaN to not be NaN');
         });
       });
     });
